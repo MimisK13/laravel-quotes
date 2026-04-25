@@ -1,0 +1,51 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dependency-version:
+          - laravel12
+          - laravel13
+
+    name: PHP 8.4 - ${{ matrix.dependency-version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Configure dependency set
+        run: |
+          if [ "${{ matrix.dependency-version }}" = "laravel12" ]; then
+            composer require "illuminate/support:^12.0" "orchestra/testbench:^10.0" --dev --no-interaction --no-update
+          else
+            composer require "illuminate/support:^13.0" "orchestra/testbench:^11.0" --dev --no-interaction --no-update
+          fi
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: composer test
+
+      - name: Run static analysis
+        run: composer analyse
