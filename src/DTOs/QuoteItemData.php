@@ -12,16 +12,19 @@ final readonly class QuoteItemData
         public ?float  $taxRate,
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         return new self(
-            name: $data['name'],
-            description: $data['description'] ?? null,
+            name: (string) ($data['name'] ?? ''),
+            description: isset($data['description']) ? (string) $data['description'] : null,
             quantity: (float) $data['quantity'],
             unitPrice: (float) $data['unit_price'],
             taxRate: isset($data['tax_rate'])
                 ? (float) $data['tax_rate']
-                : config('laravel-quotes.tax.default_rate'),
+                : (float) config('laravel-quotes.tax.default_rate'),
         );
     }
 

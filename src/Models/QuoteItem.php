@@ -2,10 +2,10 @@
 
 namespace Mimisk\LaravelQuotes\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class QuoteItem extends Model
+class QuoteItem extends EloquentModel
 {
     /**
      * @var list<string>
@@ -40,11 +40,15 @@ class QuoteItem extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<EloquentModel, $this>
+     */
     public function quote(): BelongsTo
     {
-        return $this->belongsTo(
-            config('laravel-quotes.models.quote')
-        );
+        $relatedModel = config('laravel-quotes.models.quote', Quote::class);
+
+        /** @var class-string<EloquentModel> $relatedModel */
+        return $this->belongsTo($relatedModel);
     }
 }
 

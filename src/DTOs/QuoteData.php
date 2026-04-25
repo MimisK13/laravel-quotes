@@ -4,6 +4,7 @@ namespace Mimisk\LaravelQuotes\DTOs;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 use Mimisk\LaravelQuotes\Enums\DiscountType;
 
 final class QuoteData
@@ -29,10 +30,31 @@ final class QuoteData
         public readonly Collection $items,
     ) {}
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): self
     {
+        $owner = $data['owner'] ?? null;
+
+        if (! $owner instanceof Model) {
+            throw new InvalidArgumentException('QuoteData owner must be an Eloquent model.');
+        }
+
+        $rawItems = $data['items'] ?? [];
+
+        if (! is_array($rawItems)) {
+            $rawItems = [];
+        }
+
+        /** @var Collection<int, QuoteItemData> $items */
+        $items = collect($rawItems)
+            ->filter(static fn (mixed $item): bool => is_array($item))
+            ->map(static fn (array $item): QuoteItemData => QuoteItemData::fromArray($item))
+            ->values();
+
         return new self(
-            owner: $data['owner'],
+            owner: $owner,
 
             number: $data['number'] ?? null,
 
@@ -49,8 +71,7 @@ final class QuoteData
 
             validUntil: $data['valid_until'] ?? null,
 
-            items: collect($data['items'] ?? [])
-                ->map(fn ($item) => QuoteItemData::fromArray($item)),
+            items: $items,
         );
     }
 }

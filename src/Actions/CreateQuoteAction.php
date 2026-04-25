@@ -4,6 +4,7 @@ namespace Mimisk\LaravelQuotes\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Mimisk\LaravelQuotes\DTOs\QuoteData;
+use Mimisk\LaravelQuotes\DTOs\QuoteItemData;
 use Mimisk\LaravelQuotes\Enums\QuoteStatus;
 use Mimisk\LaravelQuotes\Events\QuoteCreated;
 use Mimisk\LaravelQuotes\Models\Quote;
@@ -44,10 +45,23 @@ final class CreateQuoteAction
         });
     }
 
+    /**
+     * @return array<int, array{
+     *   name: string,
+     *   description: ?string,
+     *   quantity: float,
+     *   unit_price: float,
+     *   tax_rate: ?float,
+     *   subtotal: float,
+     *   tax_total: float,
+     *   total: float,
+     *   sort_order: int
+     * }>
+     */
     private function mapItems(QuoteData $data): array
     {
         return $data->items
-            ->map(function ($item, int $index): array {
+            ->map(function (QuoteItemData $item, int $index): array {
                 $subtotal = $item->subtotal();
                 $taxTotal = $item->taxAmount();
 

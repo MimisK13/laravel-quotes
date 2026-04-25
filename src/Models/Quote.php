@@ -2,13 +2,22 @@
 
 namespace Mimisk\LaravelQuotes\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Mimisk\LaravelQuotes\Enums\DiscountType;
 use Mimisk\LaravelQuotes\Enums\QuoteStatus;
 
-class Quote extends Model
+/**
+ * @property QuoteStatus $status
+ * @property DiscountType $discount_type
+ * @property float $discount_value
+ * @property float $subtotal
+ * @property float $tax_total
+ * @property float $discount_total
+ * @property float $total
+ */
+class Quote extends EloquentModel
 {
     /**
      * @var list<string>
@@ -56,16 +65,23 @@ class Quote extends Model
         ];
     }
 
+    /**
+     * @return MorphTo<EloquentModel, $this>
+     */
     public function owner(): MorphTo
     {
         return $this->morphTo();
     }
 
+    /**
+     * @return HasMany<EloquentModel, $this>
+     */
     public function items(): HasMany
     {
-        return $this->hasMany(
-            config('laravel-quotes.models.quote_item')
-        );
+        $relatedModel = config('laravel-quotes.models.quote_item', QuoteItem::class);
+
+        /** @var class-string<EloquentModel> $relatedModel */
+        return $this->hasMany($relatedModel);
     }
 }
 
