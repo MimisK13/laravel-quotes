@@ -97,16 +97,48 @@ use Mimisk\LaravelQuotes\Actions\DeleteQuoteAction;
 app(DeleteQuoteAction::class)->handle($quote); // only draft or rejected
 ```
 
+## Error Handling
+
+Actions may throw domain exceptions when an invalid operation is attempted.
+
+For example, trying to accept a quote that is not in the `sent` state will throw an `InvalidQuoteTransition` exception.
+
+You can handle these exceptions using a simple try/catch:
+
+```php
+use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
+
+try {
+    app(AcceptQuoteAction::class)->handle($quote);
+} catch (InvalidQuoteTransition $exception) {
+    return back()->with('error', $exception->getMessage());
+}
+```
+
+Alternatively, you may handle these exceptions globally using Laravel's exception handler:
+
+```php
+// bootstrap/app.php
+
+use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
+
+->withExceptions(function ($exceptions) {
+    $exceptions->render(function (InvalidQuoteTransition $exception) {
+        return back()->with('error', $exception->getMessage());
+    });
+})
+```
+
 ## Events
 
 The package dispatches the following events:
 
-- QuoteCreated
-- QuoteUpdated
-- QuoteSent
-- QuoteAccepted
-- QuoteRejected
-- QuoteExpired
+- `QuoteCreated`
+- `QuoteUpdated`
+- `QuoteSent`
+- `QuoteAccepted`
+- `QuoteRejected`
+- `QuoteExpired`
 
 ## Change log
 

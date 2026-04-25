@@ -4,8 +4,8 @@ namespace Mimisk\LaravelQuotes\Actions;
 
 use Illuminate\Support\Facades\DB;
 use Mimisk\LaravelQuotes\Enums\QuoteStatus;
+use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
 use Mimisk\LaravelQuotes\Models\Quote;
-use RuntimeException;
 
 final class DeleteQuoteAction
 {
@@ -17,9 +17,7 @@ final class DeleteQuoteAction
                 QuoteStatus::DRAFT,
                 QuoteStatus::REJECTED,
             ])) {
-                throw new RuntimeException(
-                    'Only draft or rejected quotes can be deleted.'
-                );
+                throw InvalidQuoteTransition::onlyDraftOrRejectedQuotesCanBeDeleted();
             }
 
             $quote->delete();

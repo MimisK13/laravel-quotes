@@ -7,9 +7,9 @@ use Mimisk\LaravelQuotes\DTOs\QuoteData;
 use Mimisk\LaravelQuotes\DTOs\QuoteItemData;
 use Mimisk\LaravelQuotes\Enums\QuoteStatus;
 use Mimisk\LaravelQuotes\Events\QuoteUpdated;
+use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
 use Mimisk\LaravelQuotes\Models\Quote;
 use Mimisk\LaravelQuotes\Support\CalculateQuoteTotals;
-use RuntimeException;
 
 final class UpdateQuoteAction
 {
@@ -17,7 +17,7 @@ final class UpdateQuoteAction
     {
         return DB::transaction(function () use ($quote, $data): Quote {
             if ($quote->status !== QuoteStatus::DRAFT) {
-                throw new RuntimeException('Only draft quotes can be updated.');
+                throw InvalidQuoteTransition::onlyDraftQuotesCanBeUpdated();
             }
 
             $totals = app(CalculateQuoteTotals::class)->handle($data);

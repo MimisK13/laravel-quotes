@@ -2,6 +2,17 @@
 
 All notable changes to `LaravelQuotes` will be documented in this file.
 
+## 0.0.2 - 2026-04-25
+
+### Added
+- Introduced `InvalidQuoteTransition` domain exception for invalid quote state transitions.
+- Added explicit exception messages for already processed transitions (`alreadySent`, `alreadyAccepted`, `alreadyRejected`, `alreadyExpired`).
+- Added README guidance for handling quote transition exceptions (try/catch and global handler examples).
+
+### Changed
+- Updated quote lifecycle actions to throw `InvalidQuoteTransition` instead of generic `RuntimeException`.
+- Updated feature tests to assert the new domain exception type.
+
 ## 0.0.1 - 2026-04-25
 
 ### Added

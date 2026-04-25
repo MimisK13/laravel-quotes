@@ -19,6 +19,7 @@ use Mimisk\LaravelQuotes\Events\QuoteExpired;
 use Mimisk\LaravelQuotes\Events\QuoteRejected;
 use Mimisk\LaravelQuotes\Events\QuoteSent;
 use Mimisk\LaravelQuotes\Events\QuoteUpdated;
+use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
 use Mimisk\LaravelQuotes\Models\Quote;
 use Mimisk\LaravelQuotes\Tests\Fixtures\TestOwner;
 
@@ -173,7 +174,7 @@ it('does not allow updating non-draft quotes', function (): void {
         quoteData($owner, [
             ['name' => 'Item 2', 'quantity' => 1, 'unit_price' => 30, 'tax_rate' => 24],
         ])
-    ))->toThrow(\RuntimeException::class, 'Only draft quotes can be updated.');
+    ))->toThrow(InvalidQuoteTransition::class, 'Only draft quotes can be updated.');
 });
 
 it('sends quote from draft to sent', function (): void {
@@ -204,7 +205,7 @@ it('does not allow sending non-draft quotes', function (): void {
     $quote->update(['status' => QuoteStatus::ACCEPTED]);
 
     expect(fn () => app(SendQuoteAction::class)->handle($quote->fresh()))
-        ->toThrow(\RuntimeException::class, 'Only draft quotes can be sent.');
+        ->toThrow(InvalidQuoteTransition::class, 'Only draft quotes can be sent.');
 });
 
 it('accepts sent quote', function (): void {
@@ -272,13 +273,13 @@ it('does not allow accept reject expire from invalid status', function (): void 
     );
 
     expect(fn () => app(AcceptQuoteAction::class)->handle($quote))
-        ->toThrow(\RuntimeException::class, 'Only sent quotes can be accepted.');
+        ->toThrow(InvalidQuoteTransition::class, 'Only sent quotes can be accepted.');
 
     expect(fn () => app(RejectQuoteAction::class)->handle($quote))
-        ->toThrow(\RuntimeException::class, 'Only sent quotes can be rejected.');
+        ->toThrow(InvalidQuoteTransition::class, 'Only sent quotes can be rejected.');
 
     expect(fn () => app(ExpireQuoteAction::class)->handle($quote))
-        ->toThrow(\RuntimeException::class, 'Only sent quotes can be expired.');
+        ->toThrow(InvalidQuoteTransition::class, 'Only sent quotes can be expired.');
 });
 
 it('deletes draft and rejected quotes but blocks other statuses', function (): void {
@@ -313,5 +314,5 @@ it('deletes draft and rejected quotes but blocks other statuses', function (): v
     );
 
     expect(fn () => app(DeleteQuoteAction::class)->handle($sent))
-        ->toThrow(\RuntimeException::class, 'Only draft or rejected quotes can be deleted.');
+        ->toThrow(InvalidQuoteTransition::class, 'Only draft or rejected quotes can be deleted.');
 });

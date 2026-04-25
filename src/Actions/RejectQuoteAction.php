@@ -5,16 +5,21 @@ namespace Mimisk\LaravelQuotes\Actions;
 use Illuminate\Support\Facades\DB;
 use Mimisk\LaravelQuotes\Enums\QuoteStatus;
 use Mimisk\LaravelQuotes\Events\QuoteRejected;
+use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
 use Mimisk\LaravelQuotes\Models\Quote;
-use RuntimeException;
 
 final class RejectQuoteAction
 {
     public function handle(Quote $quote): Quote
     {
         return DB::transaction(function () use ($quote): Quote {
+
+            if ($quote->status === QuoteStatus::REJECTED) {
+                throw InvalidQuoteTransition::alreadyRejected();
+            }
+
             if ($quote->status !== QuoteStatus::SENT) {
-                throw new RuntimeException('Only sent quotes can be rejected.');
+                throw InvalidQuoteTransition::onlySentQuotesCanBeRejected();
             }
 
             $quote->update([
