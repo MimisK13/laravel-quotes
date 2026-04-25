@@ -8,31 +8,22 @@ class LaravelQuotesServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->bootForConsole();
-        }
+        $this->loadMigrationsFrom(
+            __DIR__ . '/../database/migrations'
+        );
+
+        $this->publishes([
+            __DIR__ . '/../config/laravel-quotes.php' => config_path('laravel-quotes.php'),
+        ], 'quotes-config');
+
+        $this->publishes([
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+        ], 'quotes-migrations');
     }
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laravel-quotes.php', 'laravel-quotes');
-
-        $this->app->singleton(LaravelQuotes::class, fn (): LaravelQuotes => new LaravelQuotes());
-        $this->app->alias(LaravelQuotes::class, 'laravel-quotes');
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function provides(): array
-    {
-        return ['laravel-quotes'];
-    }
-
-    protected function bootForConsole(): void
-    {
-        $this->publishes([
-            __DIR__.'/../config/laravel-quotes.php' => config_path('laravel-quotes.php'),
-        ], 'laravel-quotes.config');
     }
 }
+

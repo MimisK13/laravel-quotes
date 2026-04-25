@@ -15,3 +15,4 @@ class LaravelQuotes extends Facade
         return 'laravel-quotes';
     }
 }
+

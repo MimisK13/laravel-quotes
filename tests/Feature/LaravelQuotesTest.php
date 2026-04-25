@@ -2,6 +2,7 @@
 
 use Mimisk\LaravelQuotes\Facades\LaravelQuotes as LaravelQuotesFacade;
 use Mimisk\LaravelQuotes\LaravelQuotes;
+use Mimisk\LaravelQuotes\LaravelQuotesServiceProvider;
 
 it('resolves the package service from the container', function (): void {
     $service = app(LaravelQuotes::class);
@@ -10,25 +11,20 @@ it('resolves the package service from the container', function (): void {
         ->toBeInstanceOf(LaravelQuotes::class);
 });
 
-it('returns a random quote from configuration', function (): void {
-    config()->set('laravel-quotes.quotes', ['Alpha', 'Beta', 'Gamma']);
+it('registers the expected service provider', function (): void {
+    $providers = app()->getLoadedProviders();
 
-    $quote = app(LaravelQuotes::class)->random();
-
-    expect($quote)->toBeIn(['Alpha', 'Beta', 'Gamma']);
+    expect($providers)
+        ->toHaveKey(LaravelQuotesServiceProvider::class)
+        ->and($providers[LaravelQuotesServiceProvider::class])->toBeTrue();
 });
 
-it('returns fallback quote when list is empty', function (): void {
-    config()->set('laravel-quotes.quotes', []);
-
-    $quote = app(LaravelQuotes::class)->random();
-
-    expect($quote)->toBe('No quotes available.');
+it('registers the facade alias class', function (): void {
+    expect(class_exists(LaravelQuotesFacade::class))->toBeTrue();
 });
 
-it('works through the facade', function (): void {
-    config()->set('laravel-quotes.quotes', ['Ship']);
-
-    expect(LaravelQuotesFacade::all())->toBe(['Ship'])
-        ->and(LaravelQuotesFacade::random())->toBe('Ship');
+it('loads core package config values', function (): void {
+    expect(config('laravel-quotes.currency'))->toBe('EUR')
+        ->and(config('laravel-quotes.discount.default_type'))->toBe('fixed')
+        ->and(config('laravel-quotes.owner.morph_name'))->toBe('owner');
 });

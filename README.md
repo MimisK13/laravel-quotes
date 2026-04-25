@@ -16,24 +16,90 @@ composer require mimisk/laravel-quotes
 
 ## Usage
 
-Get all quotes:
-
-```php
-use Mimisk\LaravelQuotes\Facades\LaravelQuotes;
-
-$quotes = LaravelQuotes::all();
-```
-
-Get one random quote:
-
-```php
-$quote = LaravelQuotes::random();
-```
-
-Override quotes in your app by publishing config:
+Publish config (optional):
 
 ```bash
-php artisan vendor:publish --tag=laravel-quotes.config
+php artisan vendor:publish --tag=quotes-config
+```
+
+Publish migrations (optional):
+
+```bash
+php artisan vendor:publish --tag=quotes-migrations
+```
+
+Create a quote (owner can be any morphable Eloquent model, e.g. `Customer`, `Venue`, `Event`):
+
+```php
+use Mimisk\LaravelQuotes\Actions\CreateQuoteAction;
+use Mimisk\LaravelQuotes\DTOs\QuoteData;
+
+$quote = app(CreateQuoteAction::class)->handle(QuoteData::fromArray([
+    'owner' => $customer,
+    'title' => 'Festival Backline',
+    'currency' => 'EUR',
+    'discount_type' => 'fixed', // fixed | percentage
+    'discount_value' => 50,
+    'items' => [
+        [
+            'name' => 'Sound Engineer',
+            'quantity' => 1,
+            'unit_price' => 400,
+            'tax_rate' => 24,
+        ],
+        [
+            'name' => 'Lighting Setup',
+            'quantity' => 1,
+            'unit_price' => 650,
+            'tax_rate' => 24,
+        ],
+    ],
+]));
+```
+
+Update a draft quote:
+
+```php
+use Mimisk\LaravelQuotes\Actions\UpdateQuoteAction;
+use Mimisk\LaravelQuotes\DTOs\QuoteData;
+
+app(UpdateQuoteAction::class)->handle(
+    $quote,
+    QuoteData::fromArray([
+        'owner' => $customer,
+        'title' => 'Updated Quote',
+        'items' => [
+            [
+                'name' => 'Updated Service',
+                'quantity' => 2,
+                'unit_price' => 300,
+                'tax_rate' => 24,
+            ],
+        ],
+    ])
+);
+```
+
+Status transitions:
+
+```php
+use Mimisk\LaravelQuotes\Actions\AcceptQuoteAction;
+use Mimisk\LaravelQuotes\Actions\ExpireQuoteAction;
+use Mimisk\LaravelQuotes\Actions\RejectQuoteAction;
+use Mimisk\LaravelQuotes\Actions\SendQuoteAction;
+
+app(SendQuoteAction::class)->handle($quote);    // draft -> sent
+app(AcceptQuoteAction::class)->handle($quote);  // sent -> accepted
+app(RejectQuoteAction::class)->handle($quote);  // sent -> rejected
+app(ExpireQuoteAction::class)->handle($quote);  // sent -> expired
+```
+
+Delete a quote:
+
+```php
+use Mimisk\LaravelQuotes\Actions\DeleteQuoteAction;
+
+app(DeleteQuoteAction::class)->handle($quote); // only draft or rejected
 ```
 
 ## Change log
