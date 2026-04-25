@@ -9,6 +9,12 @@ use Mimisk\LaravelQuotes\Enums\DiscountType;
 use Mimisk\LaravelQuotes\Enums\QuoteStatus;
 
 /**
+ * @property string $title
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $valid_until
+ * @property \Illuminate\Support\Carbon|null $sent_at
+ * @property \Illuminate\Support\Carbon|null $accepted_at
+ * @property \Illuminate\Support\Carbon|null $rejected_at
  * @property QuoteStatus $status
  * @property DiscountType $discount_type
  * @property float $discount_value
@@ -74,14 +80,14 @@ class Quote extends EloquentModel
     }
 
     /**
-     * @return HasMany<EloquentModel, $this>
+     * @return HasMany<QuoteItem, $this>
      */
     public function items(): HasMany
     {
-        $relatedModel = config('laravel-quotes.models.quote_item', QuoteItem::class);
+        $relatedModel = config('quotes.models.quote_item', QuoteItem::class);
 
-        /** @var class-string<EloquentModel> $relatedModel */
-        return $this->hasMany($relatedModel);
+        /** @var class-string<QuoteItem> $relatedModel */
+        return $this->hasMany($relatedModel, 'quote_id');
     }
 }
 

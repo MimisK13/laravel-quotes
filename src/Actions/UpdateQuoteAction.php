@@ -25,7 +25,7 @@ final class UpdateQuoteAction
             $quote->update([
                 'title' => $data->title,
                 'notes' => $data->notes,
-                'currency' => $data->currency ?? config('laravel-quotes.currency'),
+                'currency' => $data->currency ?? config('quotes.currency'),
                 'valid_until' => $data->validUntil,
                 ...$totals,
             ]);

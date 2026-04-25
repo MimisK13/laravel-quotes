@@ -7,27 +7,27 @@ use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Mimisk\LaravelQuotes\Enums\DiscountType;
 
-final class QuoteData
+final readonly class QuoteData
 {
     /**
      * @param Collection<int, QuoteItemData> $items
      */
     public function __construct(
-        public readonly Model $owner,
+        public Model        $owner,
 
-        public readonly ?string $number,
+        public ?string      $number,
 
-        public readonly ?string $title,
-        public readonly ?string $notes,
+        public ?string      $title,
+        public ?string      $notes,
 
-        public readonly ?string $currency,
+        public ?string      $currency,
 
-        public readonly DiscountType $discountType,
-        public readonly float $discountValue,
+        public DiscountType $discountType,
+        public float        $discountValue,
 
-        public readonly ?string $validUntil,
+        public ?string      $validUntil,
 
-        public readonly Collection $items,
+        public Collection   $items,
     ) {}
 
     /**
@@ -35,17 +35,17 @@ final class QuoteData
      */
     public static function fromArray(array $data): self
     {
+        // Owner validation.
         $owner = $data['owner'] ?? null;
 
         if (! $owner instanceof Model) {
             throw new InvalidArgumentException('QuoteData owner must be an Eloquent model.');
         }
 
-        $rawItems = $data['items'] ?? [];
-
-        if (! is_array($rawItems)) {
-            $rawItems = [];
-        }
+        // Normalize items.
+        $rawItems = is_array($data['items'] ?? null)
+            ? $data['items']
+            : [];
 
         /** @var Collection<int, QuoteItemData> $items */
         $items = collect($rawItems)
@@ -55,17 +55,16 @@ final class QuoteData
 
         return new self(
             owner: $owner,
-
             number: $data['number'] ?? null,
 
             title: $data['title'] ?? null,
             notes: $data['notes'] ?? null,
 
-            currency: $data['currency'] ?? config('laravel-quotes.currency'),
+            currency: $data['currency'] ?? config('quotes.currency'),
 
             discountType: isset($data['discount_type'])
                 ? DiscountType::from($data['discount_type'])
-                : DiscountType::from(config('laravel-quotes.discount.default_type')),
+                : DiscountType::from(config('quotes.discount.default_type')),
 
             discountValue: (float) ($data['discount_value'] ?? 0),
 

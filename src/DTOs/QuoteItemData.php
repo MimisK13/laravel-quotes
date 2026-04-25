@@ -24,7 +24,7 @@ final readonly class QuoteItemData
             unitPrice: (float) $data['unit_price'],
             taxRate: isset($data['tax_rate'])
                 ? (float) $data['tax_rate']
-                : (float) config('laravel-quotes.tax.default_rate'),
+                : (float) config('quotes.tax.default_rate'),
         );
     }
 
@@ -35,7 +35,7 @@ final readonly class QuoteItemData
 
     public function taxAmount(): float
     {
-        if (!$this->taxRate || $this->taxRate <= 0) {
+        if ($this->taxRate <= 0) {
             return 0;
         }
 

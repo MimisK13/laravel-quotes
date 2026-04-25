@@ -5,6 +5,16 @@ namespace Mimisk\LaravelQuotes\Models;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $name
+ * @property string|null $description
+ * @property float $quantity
+ * @property float $unit_price
+ * @property float|null $tax_rate
+ * @property float $subtotal
+ * @property float $tax_total
+ * @property float $total
+ */
 class QuoteItem extends EloquentModel
 {
     /**
@@ -41,14 +51,14 @@ class QuoteItem extends EloquentModel
     }
 
     /**
-     * @return BelongsTo<EloquentModel, $this>
+     * @return BelongsTo<Quote, $this>
      */
     public function quote(): BelongsTo
     {
-        $relatedModel = config('laravel-quotes.models.quote', Quote::class);
+        $relatedModel = config('quotes.models.quote', Quote::class);
 
-        /** @var class-string<EloquentModel> $relatedModel */
-        return $this->belongsTo($relatedModel);
+        /** @var class-string<Quote> $relatedModel */
+        return $this->belongsTo($relatedModel, 'quote_id');
     }
 }
 

@@ -1,8 +1,9 @@
 # LaravelQuotes
 
+[![Tests][ico-tests]][link-tests]
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Tests][ico-tests]][link-tests]
+[![codecov](https://codecov.io/gh/MimisK13/laravel-quotes/graph/badge.svg?token=JO6J91OD6C)](https://codecov.io/gh/MimisK13/laravel-quotes)
 
 A lightweight Laravel package that provides quote helpers with config-driven defaults.
 
@@ -22,13 +23,7 @@ Publish config (optional):
 php artisan vendor:publish --tag=quotes-config
 ```
 
-Publish migrations (optional):
-
-```bash
-php artisan vendor:publish --tag=quotes-migrations
-```
-
-Create a quote (owner can be any morphable Eloquent model, e.g. `Customer`, `Venue`, `Event`):
+Create a quote (owner can be any morphable Eloquent model, e.g. `Customer`):
 
 ```php
 use Mimisk\LaravelQuotes\Actions\CreateQuoteAction;
@@ -36,21 +31,21 @@ use Mimisk\LaravelQuotes\DTOs\QuoteData;
 
 $quote = app(CreateQuoteAction::class)->handle(QuoteData::fromArray([
     'owner' => $customer,
-    'title' => 'Festival Backline',
+    'title' => 'Customer Products Quote',
     'currency' => 'EUR',
     'discount_type' => 'fixed', // fixed | percentage
     'discount_value' => 50,
     'items' => [
         [
-            'name' => 'Sound Engineer',
-            'quantity' => 1,
-            'unit_price' => 400,
+            'name' => 'Product A',
+            'quantity' => 2,
+            'unit_price' => 120,
             'tax_rate' => 24,
         ],
         [
-            'name' => 'Lighting Setup',
+            'name' => 'Product B',
             'quantity' => 1,
-            'unit_price' => 650,
+            'unit_price' => 85,
             'tax_rate' => 24,
         ],
     ],
@@ -67,12 +62,12 @@ app(UpdateQuoteAction::class)->handle(
     $quote,
     QuoteData::fromArray([
         'owner' => $customer,
-        'title' => 'Updated Quote',
+        'title' => 'Updated Customer Quote',
         'items' => [
             [
-                'name' => 'Updated Service',
-                'quantity' => 2,
-                'unit_price' => 300,
+                'name' => 'Product A (Updated)',
+                'quantity' => 3,
+                'unit_price' => 110,
                 'tax_rate' => 24,
             ],
         ],

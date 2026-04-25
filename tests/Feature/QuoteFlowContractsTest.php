@@ -30,16 +30,17 @@ it('autoloads all quote flow classes in the package namespace', function (): voi
     }
 });
 
-it('exposes flow config under laravel-quotes key', function (): void {
-    expect(config('laravel-quotes.currency'))->toBe('EUR')
-        ->and(config('laravel-quotes.number.prefix'))->toBe('Q-')
-        ->and(config('laravel-quotes.tax.default_rate'))->toBe(24.0)
-        ->and(config('laravel-quotes.discount.default_type'))->toBe('fixed');
+it('exposes flow config under quotes key', function (): void {
+    expect(config('quotes.currency'))->toBe('EUR')
+        ->and(config('quotes.number.prefix'))->toBe('Q-')
+        ->and(config('quotes.valid_until.default_days'))->toBe(10)
+        ->and(config('quotes.tax.default_rate'))->toBe(24.0)
+        ->and(config('quotes.discount.default_type'))->toBe('fixed');
 });
 
 it('points model config to autoloadable classes', function (): void {
-    $quoteClass = config('laravel-quotes.models.quote');
-    $quoteItemClass = config('laravel-quotes.models.quote_item');
+    $quoteClass = config('quotes.models.quote');
+    $quoteItemClass = config('quotes.models.quote_item');
 
     expect(is_string($quoteClass))->toBeTrue()
         ->and(is_string($quoteItemClass))->toBeTrue()

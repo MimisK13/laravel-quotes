@@ -20,6 +20,8 @@ final class CreateQuoteAction
 
             $number = $data->number
                 ?? app(GenerateQuoteNumber::class)->handle();
+            $defaultValidUntilDays = (int) config('quotes.valid_until.default_days', 10);
+            $validUntil = $data->validUntil ?: now()->addDays($defaultValidUntilDays);
 
             $quote = Quote::query()->create([
                 'owner_id' => $data->owner->getKey(),
@@ -30,7 +32,8 @@ final class CreateQuoteAction
 
                 'title' => $data->title,
                 'notes' => $data->notes,
-                'currency' => $data->currency ?? config('laravel-quotes.currency'),
+                'currency' => $data->currency ?? config('quotes.currency'),
+                'valid_until' => $validUntil,
 
                 ...$totals,
             ]);

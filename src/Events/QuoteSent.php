@@ -2,15 +2,12 @@
 
 namespace Mimisk\LaravelQuotes\Events;
 
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 use Mimisk\LaravelQuotes\Models\Quote;
 
-class QuoteSent
+final readonly class QuoteSent
 {
-    use Dispatchable;
-    use SerializesModels;
-
-    public function __construct(public Quote $quote) {}
+    public function __construct(
+        public Quote $quote,
+    ) {}
 }
 

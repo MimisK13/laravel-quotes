@@ -45,7 +45,7 @@
                 "Mimisk\\LaravelQuotes\\LaravelQuotesServiceProvider"
             ],
             "aliases": {
-                "LaravelQuotes": "Mimisk\\LaravelQuotes\\Facades\\LaravelQuotes"
+                "Quotes": "Mimisk\\LaravelQuotes\\Facades\\Quotes"
             }
         }
     },

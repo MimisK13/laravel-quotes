@@ -3,6 +3,7 @@
 namespace Mimisk\LaravelQuotes;
 
 use Illuminate\Support\ServiceProvider;
+use Mimisk\LaravelQuotes\Services\QuotesService;
 
 class LaravelQuotesServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,7 @@ class LaravelQuotesServiceProvider extends ServiceProvider
         );
 
         $this->publishes([
-            __DIR__ . '/../config/laravel-quotes.php' => config_path('laravel-quotes.php'),
+            __DIR__ . '/../config/quotes.php' => config_path('quotes.php'),
         ], 'quotes-config');
 
         $this->publishes([
@@ -23,7 +24,8 @@ class LaravelQuotesServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/laravel-quotes.php', 'laravel-quotes');
+        $this->app->singleton('quotes', QuotesService::class);
+
+        $this->mergeConfigFrom(__DIR__.'/../config/quotes.php', 'quotes');
     }
 }
-

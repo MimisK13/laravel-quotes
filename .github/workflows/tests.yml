@@ -28,7 +28,7 @@ jobs:
         with:
           php-version: '8.4'
           tools: composer:v2
-          coverage: none
+          coverage: xdebug
 
       - name: Configure dependency set
         run: |
@@ -45,7 +45,14 @@ jobs:
         run: composer update --prefer-dist --no-interaction
 
       - name: Run tests
-        run: composer test
+        run: vendor/bin/pest --coverage-clover=coverage.xml
+
+      - name: Upload coverage to Codecov
+        if: matrix.dependency-version == 'laravel13'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: true
 
       - name: Run static analysis
         run: composer analyse
