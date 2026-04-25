@@ -208,6 +208,19 @@ it('does not allow sending non-draft quotes', function (): void {
         ->toThrow(InvalidQuoteTransition::class, 'Only draft quotes can be sent.');
 });
 
+it('does not allow sending an already sent quote', function (): void {
+    $quote = app(SendQuoteAction::class)->handle(
+        app(CreateQuoteAction::class)->handle(
+            quoteData(quoteOwner(), [
+                ['name' => 'Item', 'quantity' => 1, 'unit_price' => 20, 'tax_rate' => 24],
+            ])
+        )
+    );
+
+    expect(fn () => app(SendQuoteAction::class)->handle($quote->fresh()))
+        ->toThrow(InvalidQuoteTransition::class, 'This quote has already been sent.');
+});
+
 it('accepts sent quote', function (): void {
     Event::fake([QuoteAccepted::class]);
 
@@ -248,6 +261,36 @@ it('rejects sent quote', function (): void {
     Event::assertDispatched(QuoteRejected::class);
 });
 
+it('does not allow accepting an already accepted quote', function (): void {
+    $quote = app(AcceptQuoteAction::class)->handle(
+        app(SendQuoteAction::class)->handle(
+            app(CreateQuoteAction::class)->handle(
+                quoteData(quoteOwner(), [
+                    ['name' => 'Item', 'quantity' => 1, 'unit_price' => 20, 'tax_rate' => 24],
+                ])
+            )
+        )
+    );
+
+    expect(fn () => app(AcceptQuoteAction::class)->handle($quote->fresh()))
+        ->toThrow(InvalidQuoteTransition::class, 'This quote has already been accepted.');
+});
+
+it('does not allow rejecting an already rejected quote', function (): void {
+    $quote = app(RejectQuoteAction::class)->handle(
+        app(SendQuoteAction::class)->handle(
+            app(CreateQuoteAction::class)->handle(
+                quoteData(quoteOwner(), [
+                    ['name' => 'Item', 'quantity' => 1, 'unit_price' => 20, 'tax_rate' => 24],
+                ])
+            )
+        )
+    );
+
+    expect(fn () => app(RejectQuoteAction::class)->handle($quote->fresh()))
+        ->toThrow(InvalidQuoteTransition::class, 'This quote has already been rejected.');
+});
+
 it('expires sent quote', function (): void {
     Event::fake([QuoteExpired::class]);
 
@@ -263,6 +306,21 @@ it('expires sent quote', function (): void {
 
     expect($expired->status)->toBe(QuoteStatus::EXPIRED);
     Event::assertDispatched(QuoteExpired::class);
+});
+
+it('does not allow expiring an already expired quote', function (): void {
+    $quote = app(ExpireQuoteAction::class)->handle(
+        app(SendQuoteAction::class)->handle(
+            app(CreateQuoteAction::class)->handle(
+                quoteData(quoteOwner(), [
+                    ['name' => 'Item', 'quantity' => 1, 'unit_price' => 20, 'tax_rate' => 24],
+                ])
+            )
+        )
+    );
+
+    expect(fn () => app(ExpireQuoteAction::class)->handle($quote->fresh()))
+        ->toThrow(InvalidQuoteTransition::class, 'This quote has already expired.');
 });
 
 it('does not allow accept reject expire from invalid status', function (): void {
