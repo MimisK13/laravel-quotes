@@ -97,6 +97,17 @@ use Mimisk\LaravelQuotes\Actions\DeleteQuoteAction;
 app(DeleteQuoteAction::class)->handle($quote); // only draft or rejected
 ```
 
+## Events
+
+The package dispatches the following events:
+
+- QuoteCreated
+- QuoteUpdated
+- QuoteSent
+- QuoteAccepted
+- QuoteRejected
+- QuoteExpired
+
 ## Change log
 
 Please see the [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.

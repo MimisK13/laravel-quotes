@@ -19,6 +19,9 @@ it('loads core package config values', function (): void {
 });
 
 it('resolves quotes facade to quotes service binding', function (): void {
-    expect(app('quotes'))->toBeInstanceOf(QuotesService::class)
-        ->and(Quotes::getFacadeRoot())->toBeInstanceOf(QuotesService::class);
+    $service = app(QuotesService::class);
+    $facadeRoot = Quotes::getFacadeRoot();
+
+    expect($service)->toBeInstanceOf(QuotesService::class)
+        ->and($facadeRoot instanceof QuotesService)->toBeTrue();
 });
