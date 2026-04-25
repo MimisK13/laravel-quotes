@@ -3,6 +3,7 @@
 namespace Mimisk\LaravelQuotes;
 
 use Illuminate\Support\ServiceProvider;
+use Mimisk\LaravelQuotes\Commands\ExpireQuotesCommand;
 use Mimisk\LaravelQuotes\Services\QuotesService;
 
 class LaravelQuotesServiceProvider extends ServiceProvider
@@ -20,6 +21,12 @@ class LaravelQuotesServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], 'quotes-migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ExpireQuotesCommand::class,
+            ]);
+        }
     }
 
     public function register(): void

@@ -2,6 +2,16 @@
 
 All notable changes to `LaravelQuotes` will be documented in this file.
 
+## 0.0.3 - 2026-04-25
+
+### Added
+- Added `quotes:expire` Artisan command to expire `sent` quotes with `valid_until` in the past.
+- Added package documentation for quote expiration automation and scheduler usage.
+
+### Changed
+- Registered `quotes:expire` command in the package service provider when running in console.
+- Standardized new command/service provider namespace references to `Mimisk\\...` for consistent autoloading.
+
 ## 0.0.2 - 2026-04-25
 
 ### Added

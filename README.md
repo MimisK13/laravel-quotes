@@ -129,6 +129,32 @@ use Mimisk\LaravelQuotes\Exceptions\InvalidQuoteTransition;
 })
 ```
 
+### Quote Expiration Automation
+
+The package provides an Artisan command to automatically expire quotes based on the `valid_until` field.
+
+Run the command manually:
+
+```php
+    php artisan quotes:expire
+```
+
+The command will find all `sent` quotes where `valid_until` has passed and mark them as expired.
+
+You may schedule it in your application using Laravel's scheduler:
+
+```php
+    use Illuminate\Support\Facades\Schedule;
+
+    Schedule::command('quotes:expire')->daily();
+```
+
+You can adjust the frequency as needed:
+
+```php
+    Schedule::command('quotes:expire')->hourly();
+```
+
 ## Events
 
 The package dispatches the following events:
