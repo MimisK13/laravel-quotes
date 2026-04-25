@@ -96,6 +96,19 @@ it('creates quote in draft status with calculated totals and default valid until
     Event::assertDispatched(QuoteCreated::class);
 });
 
+it('resolves owner morph relation on quote model', function (): void {
+    $owner = quoteOwner();
+
+    $quote = app(CreateQuoteAction::class)->handle(
+        quoteData($owner, [
+            ['name' => 'Item A', 'quantity' => 1, 'unit_price' => 100, 'tax_rate' => 24],
+        ])
+    );
+
+    expect($quote->owner)->toBeInstanceOf(TestOwner::class)
+        ->and($quote->owner?->is($owner))->toBeTrue();
+});
+
 it('creates quote with provided valid_until instead of default fallback', function (): void {
     Carbon::setTestNow('2026-05-01 10:00:00');
 

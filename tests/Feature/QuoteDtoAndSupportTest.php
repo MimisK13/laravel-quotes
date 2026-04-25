@@ -72,6 +72,15 @@ it('throws when quote data owner is invalid', function (): void {
     ]))->toThrow(InvalidArgumentException::class, 'QuoteData owner must be an Eloquent model.');
 });
 
+it('normalizes non array items to empty collection', function (): void {
+    $data = QuoteData::fromArray([
+        'owner' => dtoOwner(),
+        'items' => 'invalid-items-format',
+    ]);
+
+    expect($data->items)->toHaveCount(0);
+});
+
 it('calculates totals with fixed discount capped at subtotal', function (): void {
     $owner = dtoOwner();
 
