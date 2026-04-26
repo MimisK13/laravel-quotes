@@ -136,7 +136,7 @@ The package provides an Artisan command to automatically expire quotes based on 
 Run the command manually:
 
 ```php
-    php artisan quotes:expire
+php artisan quotes:expire
 ```
 
 The command will find all `sent` quotes where `valid_until` has passed and mark them as expired.
@@ -144,15 +144,15 @@ The command will find all `sent` quotes where `valid_until` has passed and mark 
 You may schedule it in your application using Laravel's scheduler:
 
 ```php
-    use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Facades\Schedule;
 
-    Schedule::command('quotes:expire')->daily();
+Schedule::command('quotes:expire')->daily();
 ```
 
 You can adjust the frequency as needed:
 
 ```php
-    Schedule::command('quotes:expire')->hourly();
+Schedule::command('quotes:expire')->hourly();
 ```
 
 ## Events
