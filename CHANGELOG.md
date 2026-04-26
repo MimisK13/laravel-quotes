@@ -2,6 +2,15 @@
 
 All notable changes to `LaravelQuotes` will be documented in this file.
 
+## 0.0.4 - 2026-04-26
+
+### Changed
+- Renamed config key `quotes.valid_until.default_days` to `quotes.validity.default_days`.
+- Updated quote creation logic to read default quote validity from `quotes.validity.default_days`.
+
+### Removed
+- Removed `statuses` configuration section from `config/quotes.php`.
+
 ## 0.0.3 - 2026-04-25
 
 ### Added

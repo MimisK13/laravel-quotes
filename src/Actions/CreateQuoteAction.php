@@ -20,7 +20,7 @@ final class CreateQuoteAction
 
             $number = $data->number
                 ?? app(GenerateQuoteNumber::class)->handle();
-            $defaultValidUntilDays = (int) config('quotes.valid_until.default_days', 10);
+            $defaultValidUntilDays = (int) config('quotes.validity.default_days', 10);
             $validUntil = $data->validUntil ?: now()->addDays($defaultValidUntilDays);
 
             $quote = Quote::query()->create([

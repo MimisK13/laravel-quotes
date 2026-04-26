@@ -75,7 +75,7 @@ it('creates quote in draft status with calculated totals and default valid until
     Event::fake([QuoteCreated::class]);
 
     Carbon::setTestNow('2026-05-01 10:00:00');
-    config()->set('quotes.valid_until.default_days', 10);
+    config()->set('quotes.validity.default_days', 10);
 
     $owner = quoteOwner();
 

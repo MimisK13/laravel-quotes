@@ -33,7 +33,7 @@ it('autoloads all quote flow classes in the package namespace', function (): voi
 it('exposes flow config under quotes key', function (): void {
     expect(config('quotes.currency'))->toBe('EUR')
         ->and(config('quotes.number.prefix'))->toBe('Q-')
-        ->and(config('quotes.valid_until.default_days'))->toBe(10)
+        ->and(config('quotes.validity.default_days'))->toBe(10)
         ->and(config('quotes.tax.default_rate'))->toBe(24.0)
         ->and(config('quotes.discount.default_type'))->toBe('fixed');
 });
